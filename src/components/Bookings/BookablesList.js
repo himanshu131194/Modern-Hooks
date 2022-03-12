@@ -18,12 +18,17 @@ export default function BookablesList() {
         setBookableIndex(i => (i + 1) % bookableInGroup.length);
     }
 
+    function changeGroup(e){
+        setGroup(e.target.value);
+        setBookableIndex(0);
+    }
+
     return (
         <>
             <div>
                 <select
                     value={group}
-                    onChange={(e) => setGroup(e.target.value)}>
+                    onChange={changeGroup}>
                     {groups.map(g => <option value={g} key={g}>{g}</option>)}
                 </select>
                 <ul className="items-list-nav">
