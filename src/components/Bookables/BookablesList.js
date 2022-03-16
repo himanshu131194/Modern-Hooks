@@ -1,4 +1,4 @@
-import { useReducer, useEffect, Fragment } from "react";
+import { useReducer, useEffect, useRef, Fragment } from "react";
 import data from "../../static.json";
 import { FaArrowRight } from "react-icons/fa";
 import Spinner from '../UI/Spinner';
@@ -19,6 +19,8 @@ const initialState = {
 
 export default function BookablesList() {
 
+    const timeRef = useRef(null);
+    const nextButtonRef = useRef();
     const [ state, dispatch ] = useReducer(reducer, initialState);
     const { group, bookableIndex, bookables } = state;
     const { hasDetails, isLoading, error } = state;
@@ -26,6 +28,17 @@ export default function BookablesList() {
     const bookableInGroup = bookables.filter((b) => b.group === group);
     const groups = [...new Set(bookables.map(b => b.group))];
     const bookable = bookableInGroup[bookableIndex];
+
+    useEffect(()=>{
+        timeRef.current = setInterval(()=>{
+            dispatch({ type: "NEXT_BOOKABLE" });
+        }, 3000);
+        return stopPresentation
+    },[])
+
+    function stopPresentation(){
+        clearInterval(timeRef.current);
+    }
 
     useEffect(()=>{
         dispatch( { type: "FETCH_BOOKABLES_REQUEST" });
@@ -64,7 +77,8 @@ export default function BookablesList() {
         dispatch({
             type: "SET_BOOKABLE",
             payload: selectedIndex
-        })
+        });
+        nextButtonRef.current.focus();
     }
 
     if(error){
@@ -91,7 +105,7 @@ export default function BookablesList() {
                     ))}
                 </ul>
                 <p>
-                    <button className="btn" onClick={nextBookable} autoFocus>
+                    <button className="btn" onClick={nextBookable} ref={nextButtonRef} autoFocus>
                         <FaArrowRight />
                         <span>Next</span>
                     </button>
@@ -112,6 +126,7 @@ export default function BookablesList() {
                                     />
                                     Show Details
                                 </label>
+                                <button className="btn" onClick={stopPresentation}>Stop</button>
                             </span>
 
                         </div>
